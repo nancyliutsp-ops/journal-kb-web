@@ -1,18 +1,18 @@
 let table;
 
-document.getElementById("excelFile").addEventListener("change", handleFile);
+// 页面加载完成后自动执行
+window.onload = loadExcelFromRepo;
 
-function handleFile(e) {
-  const reader = new FileReader();
-  reader.onload = function(evt) {
-    const data = new Uint8Array(evt.target.result);
-    const workbook = XLSX.read(data, { type: "array" });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const json = XLSX.utils.sheet_to_json(sheet);
+async function loadExcelFromRepo() {
+  const response = await fetch("data/journals.xlsx");
+  const arrayBuffer = await response.arrayBuffer();
 
-    renderTable(json);
-  };
-  reader.readAsArrayBuffer(e.target.files[0]);
+  const data = new Uint8Array(arrayBuffer);
+  const workbook = XLSX.read(data, { type: "array" });
+  const sheet = workbook.Sheets[workbook.SheetNames[0]];
+  const json = XLSX.utils.sheet_to_json(sheet);
+
+  renderTable(json);
 }
 
 function renderTable(data) {
