@@ -3,51 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>期刊知识库（网页版）</title>
+  <title>期刊知识库（内置 Excel）</title>
 
-  <!-- SheetJS: 读取 xlsx -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- 更稳的CDN（国内通常更友好），如果你这边仍不行我再给“完全本地化”的版本 -->
+  <script src="https://cdn.staticfile.org/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-  <!-- jQuery + DataTables: 表格搜索/分页/排序 -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
-  <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.staticfile.org/jquery/3.7.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.staticfile.org/datatables/1.13.8/css/jquery.dataTables.min.css">
+  <script src="https://cdn.staticfile.org/datatables/1.13.8/js/jquery.dataTables.min.js"></script>
 
   <style>
     body { font-family: system-ui, -apple-system, "Segoe UI", Arial, "PingFang SC", "Microsoft YaHei", sans-serif; margin: 24px; }
     .topbar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
     .badge { display:inline-block; padding: 4px 10px; border-radius: 999px; background:#f2f2f2; font-size: 12px; }
-    .hint { color:#666; font-size: 13px; margin: 6px 0 18px; }
-    .status { margin-left:auto; font-size: 13px; color:#444; }
-    .status.ok { color: #1a7f37; }
-    .status.err { color: #b42318; }
+    .hint { color:#666; font-size: 13px; margin: 6px 0 12px; }
+    #status { margin-left:auto; font-size: 13px; color:#444; }
+    #status.ok { color: #1a7f37; }
+    #status.err { color: #b42318; }
+    #errorBox { display:none; margin: 10px 0 16px; padding: 10px 12px; border:1px solid #f2c9c9; background:#fff1f2; border-radius:10px; color:#7a1f2b; }
+    code { background:#f6f8fa; padding: 1px 6px; border-radius: 6px; }
   </style>
 </head>
 
 <body>
   <div class="topbar">
     <h2 style="margin:0;">📚 期刊知识库（内置 Excel）</h2>
-    <span class="badge">数据源：data/journals.xlsx</span>
-    <div id="status" class="status">正在加载数据…</div>
+    <span class="badge">数据源：<code>data/journals.xlsx</code></span>
+    <div id="status">正在加载…</div>
   </div>
 
   <div class="hint">
-    说明：本页面会自动从仓库中的 <code>data/journals.xlsx</code> 读取数据并展示，无需手动上传。
+    本页面会自动从仓库读取 <code>data/journals.xlsx</code>。如果加载失败，会在下方显示具体原因。
   </div>
+
+  <div id="errorBox"></div>
 
   <table id="journalTable" class="display" style="width:100%"></table>
 
-  <!-- 你的逻辑文件（请确保 app.js 已改为 fetch data/journals.xlsx 的版本） -->
-  <script src="app.js"></script>
-
   <script>
-    // 给 app.js 用的小状态提示（可选）
+    // 让 app.js 可以在页面上显示状态/错误
     window.setLoadStatus = function(type, text) {
       const el = document.getElementById("status");
       el.textContent = text;
-      el.classList.remove("ok", "err");
+      el.classList.remove("ok","err");
       if (type) el.classList.add(type);
     };
+    window.showError = function(html) {
+      const box = document.getElementById("errorBox");
+      box.style.display = "block";
+      box.innerHTML = html;
+      window.setLoadStatus("err", "加载失败");
+    };
   </script>
+
+  <script src="app.js"></script>
 </body>
 </html>
