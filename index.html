@@ -1,25 +1,53 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>期刊知识库（网页版）</title>
 
-  <!-- SheetJS -->
+  <!-- SheetJS: 读取 xlsx -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-  <!-- DataTables -->
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
+  <!-- jQuery + DataTables: 表格搜索/分页/排序 -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
   <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Arial, "PingFang SC", "Microsoft YaHei", sans-serif; margin: 24px; }
+    .topbar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+    .badge { display:inline-block; padding: 4px 10px; border-radius: 999px; background:#f2f2f2; font-size: 12px; }
+    .hint { color:#666; font-size: 13px; margin: 6px 0 18px; }
+    .status { margin-left:auto; font-size: 13px; color:#444; }
+    .status.ok { color: #1a7f37; }
+    .status.err { color: #b42318; }
+  </style>
 </head>
 
 <body>
-<h2>📚 期刊知识库（Excel + 在线校验）</h2>
+  <div class="topbar">
+    <h2 style="margin:0;">📚 期刊知识库（内置 Excel）</h2>
+    <span class="badge">数据源：data/journals.xlsx</span>
+    <div id="status" class="status">正在加载数据…</div>
+  </div>
 
-<input type="file" id="excelFile" accept=".xlsx,.xls">
+  <div class="hint">
+    说明：本页面会自动从仓库中的 <code>data/journals.xlsx</code> 读取数据并展示，无需手动上传。
+  </div>
 
-<table id="journalTable" class="display" style="width:100%"></table>
+  <table id="journalTable" class="display" style="width:100%"></table>
 
-<script src="app.js"></script>
+  <!-- 你的逻辑文件（请确保 app.js 已改为 fetch data/journals.xlsx 的版本） -->
+  <script src="app.js"></script>
+
+  <script>
+    // 给 app.js 用的小状态提示（可选）
+    window.setLoadStatus = function(type, text) {
+      const el = document.getElementById("status");
+      el.textContent = text;
+      el.classList.remove("ok", "err");
+      if (type) el.classList.add(type);
+    };
+  </script>
 </body>
 </html>
